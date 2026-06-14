@@ -1,0 +1,22 @@
+# Secrets
+.env
+
+# Product database -- rebuild with scripts/download_amazon_reviews.py + scripts/build_product_index.py
+data/products/*.db
+data/products/*.db-wal
+data/products/*.db-shm
+data/amazon_raw/
+
+# Model outputs -- regenerate with predict / evaluate
+data/benchmark/predictions_*.jsonl
+data/benchmark/*_evaluation_*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# OS
+.DS_Store

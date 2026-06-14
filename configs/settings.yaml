@@ -1,0 +1,128 @@
+# EComAgentBench 主配置：generation / prediction / evaluation 三阶段
+data:
+  db_path: data/products/product.db
+  processed_dir: data/processed
+  benchmark_dir: data/benchmark
+
+num_threads: 64
+
+llm_defaults:
+  base_url: null
+  api_version: v1
+  max_tokens: 16384
+  top_p: null
+  timeout: 120
+  reasoning_effort: medium
+  use_responses_api: true
+  capture_reasoning: true
+  reasoning_summary: auto
+  max_retries: 10
+  retry_base_delay: 5.0
+  thinking_budget: 4096
+  include_thoughts: true
+  thinking_display: null
+
+# LLM provider profiles
+# 官方 API：base_url 留空，各官方 SDK 自动使用默认端点；如需走自定义网关/代理，可在对应 profile 显式设置 base_url。
+# API key 通过 .env 按厂商分别提供：
+#   OPENAI_API_KEY / GEMINI_API_KEY / ANTHROPIC_API_KEY / OPENROUTER_API_KEY
+llm_profiles:
+  openai:
+    provider: openai
+  openrouter:
+    provider: openrouter
+    base_url: null
+    providers: []
+    reasoning:
+      max_tokens: 2048
+  gemini:
+    provider: gemini
+  claude:
+    provider: claude
+
+# 数据生成配置
+generation:
+  seed: 42
+  min_features: 8
+  max_features: 20
+  query_language: en
+  llm_profile: gemini
+
+  # 采样配置
+  sampling:
+    min_category_size: 10000
+    uniform_categories: true
+
+  # 特征分区比例
+  partition:
+    query_ratio: 0.50
+    persona_ratio: 0.25
+    clarification_ratio: 0.25
+    min_query_features: 4
+    min_persona_features: 2
+    min_clarification_features: 2
+
+  # 多轮对话配置
+  clarification:
+    max_turns: 10
+
+  intents:
+    product_search: 150
+    knowledge_reasoning: 150
+    rating_quality: 150
+    feature_combination: 150
+    negative_constraint: 150
+    use_case_scenario: 150
+    coupon_budget: 150
+    review_driven: 150
+
+  llm:
+    model: gemini-3.1-pro-preview
+    temperature: 1
+    thinking_budget: 4096
+
+# 预测配置
+prediction:
+  max_steps: 100
+  num_threads: 64
+  mode: claude
+
+  modes:
+    openai_api:
+      llm_profile: openai
+      llm:
+        model: gpt-5
+        temperature: 1.0
+        reasoning_effort: medium
+
+    # OpenRouter 可选模型示例（论文实验所用）：
+    #   moonshotai/kimi-k2.6, minimax/minimax-m2.7, qwen/qwen3-30b-a3b-instruct-2507
+    openrouter:
+      llm_profile: openrouter
+      llm:
+        model: qwen/qwen3-30b-a3b-instruct-2507
+        temperature: 1.0
+        use_responses_api: false
+        parallel_tool_calls: false
+
+    gemini:
+      llm_profile: gemini
+      llm:
+        model: gemini-3.1-pro-preview
+        temperature: 1.0
+
+    claude:
+      llm_profile: claude
+      llm:
+        model: claude-opus-4-6
+        temperature: 1.0
+
+# 评测配置（LLM-as-Judge）
+evaluation:
+  num_threads: 32
+  llm_profile: gemini
+  llm:
+    model: gemini-3.1-pro-preview
+    temperature: 1.0
+    thinking_budget: 4096
+    max_retries: 100

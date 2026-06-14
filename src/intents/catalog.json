@@ -1,0 +1,238 @@
+[
+  {
+    "id": "product_search",
+    "name": "Basic Attribute Search",
+    "description": "User directly specifies product attributes like brand, type, material, skin/hair type, etc.",
+    "sampling_strategy": {
+      "require_details_fields": [],
+      "min_detail_fields": 8
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type", "details.Item Form", "details.Scent",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices", "details.Compatible Phone Models",
+      "details.Operating System", "details.RAM", "details.Hard Drive", "details.Processor",
+      "details.Wireless Type", "details.Memory Storage Capacity",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type", "details.Hardware Platform",
+      "details.Video Capture Resolution",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type",
+      "average_rating", "rating_number", "price"
+    ]
+  },
+  {
+    "id": "knowledge_reasoning",
+    "name": "Knowledge Reasoning Search",
+    "description": "User's request requires world knowledge or domain expertise to map to specific product attributes. The query should NOT directly name the attribute, but instead describe a need that implies it.",
+    "sampling_strategy": {
+      "require_features_or_description": true,
+      "min_detail_fields": 8
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type", "details.Item Form", "details.Scent",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices", "details.Compatible Phone Models",
+      "details.Operating System", "details.RAM", "details.Hard Drive", "details.Processor",
+      "details.Wireless Type", "details.Memory Storage Capacity",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type", "details.Hardware Platform",
+      "details.Video Capture Resolution",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type",
+      "average_rating", "rating_number", "price"
+    ]
+  },
+  {
+    "id": "rating_quality",
+    "name": "Rating & Quality Filter",
+    "description": "User has explicit requirements on review quantity and rating score.",
+    "sampling_strategy": {
+      "min_rating": 4.0,
+      "min_rating_number": 20,
+      "min_detail_fields": 8
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices", "details.Compatible Phone Models",
+      "details.Operating System", "details.RAM", "details.Hard Drive", "details.Processor",
+      "details.Wireless Type", "details.Memory Storage Capacity",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type", "details.Hardware Platform",
+      "details.Video Capture Resolution",
+      "details.Item Form", "details.Scent",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type",
+      "price"
+    ]
+  },
+  {
+    "id": "feature_combination",
+    "name": "Multi-Feature Combination",
+    "description": "User specifies 4+ constraints across different feature dimensions simultaneously (high complexity).",
+    "sampling_strategy": {
+      "min_detail_fields": 9,
+      "require_cross_field": true
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type", "details.Item Form", "details.Scent",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices", "details.Compatible Phone Models",
+      "details.Operating System", "details.RAM", "details.Hard Drive", "details.Processor",
+      "details.Wireless Type", "details.Memory Storage Capacity",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type", "details.Hardware Platform",
+      "details.Video Capture Resolution",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type",
+      "average_rating", "rating_number", "price"
+    ]
+  },
+  {
+    "id": "negative_constraint",
+    "name": "Negative Constraint Search",
+    "description": "User wants a product of this type but explicitly states they do NOT want certain attribute values.",
+    "sampling_strategy": {
+      "require_negative_features": true,
+      "min_detail_fields": 8
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices",
+      "details.Operating System", "details.RAM", "details.Processor",
+      "details.Wireless Type",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type",
+      "details.Video Capture Resolution",
+      "details.Item Form", "details.Scent",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type",
+      "average_rating", "rating_number", "price"
+    ]
+  },
+  {
+    "id": "use_case_scenario",
+    "name": "Use Case Scenario",
+    "description": "User describes a real-life situation or problem they face, and the agent must infer which product attributes satisfy that scenario.",
+    "sampling_strategy": {
+      "require_features_or_description": true,
+      "min_detail_fields": 8
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type", "details.Item Form", "details.Scent",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices", "details.Compatible Phone Models",
+      "details.Operating System", "details.RAM", "details.Hard Drive", "details.Processor",
+      "details.Wireless Type", "details.Memory Storage Capacity",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type", "details.Hardware Platform",
+      "details.Video Capture Resolution",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type",
+      "average_rating", "rating_number", "price"
+    ]
+  },
+  {
+    "id": "coupon_budget",
+    "name": "Coupon & Budget Optimization",
+    "description": "User has a budget constraint and a discount voucher. Must find products that satisfy requirements while staying within budget after applying the voucher.",
+    "sampling_strategy": {
+      "require_price": true,
+      "min_detail_fields": 8
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices",
+      "details.Operating System", "details.RAM", "details.Hard Drive", "details.Processor",
+      "details.Wireless Type", "details.Memory Storage Capacity",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type",
+      "details.Video Capture Resolution",
+      "details.Item Form", "details.Scent",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type"
+    ]
+  },
+  {
+    "id": "review_driven",
+    "name": "Review-Driven Recommendation",
+    "description": "User wants a product whose reviews contain specific opinions.",
+    "sampling_strategy": {
+      "min_reviews": 10,
+      "min_detail_fields": 8
+    },
+    "persona_eligible_fields": [
+      "details.Brand", "details.Color", "details.Material", "details.Style", "details.Size",
+      "details.Skin Type", "details.Hair Type",
+      "details.Form Factor", "details.Shell Type",
+      "details.Compatible Devices",
+      "details.Operating System", "details.RAM", "details.Hard Drive", "details.Processor",
+      "details.Wireless Type", "details.Memory Storage Capacity",
+      "details.Lens Type", "details.Water Resistance Level",
+      "details.Power Source"
+    ],
+    "clarification_eligible_fields": [
+      "details.Special Feature", "details.Material Feature", "details.Product Benefits",
+      "details.Finish Type", "details.Recommended Uses For Product",
+      "details.Connectivity Technology", "details.Connector Type",
+      "details.Pattern", "details.Mounting Type", "details.Screen Size",
+      "details.Graphics Coprocessor", "details.Computer Memory Type",
+      "details.Video Capture Resolution",
+      "details.Item Form", "details.Scent",
+      "details.Ink Color", "details.Shape", "details.Closure", "details.Point Type",
+      "average_rating", "rating_number", "price"
+    ]
+  }
+]
