@@ -2,11 +2,11 @@
 
 **Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent**
 
-**Accepted to EMNLP 2026 Industry Track.** Camera-ready version submitted.
+**Accepted to EMNLP 2026 Industry Track.**
 
 **Zeyao Du, Tong Li, Haibo Zhang** · Shopee
 
-[Paper (arXiv)](https://arxiv.org/abs/2606.17698v3)
+[Paper (arXiv)](https://arxiv.org/abs/2606.17698)
 [Product database](https://huggingface.co/datasets/ecomagentbench/EcomAgentBenchProductDB) ·
 [Citation](#citation)
 
@@ -42,7 +42,7 @@ domains.
 ## Paper results
 
 The following are the frozen results reported in the
-[camera-ready paper](https://arxiv.org/abs/2606.17698v3), evaluated on the same 662 tasks.
+[camera-ready paper](https://arxiv.org/abs/2606.17698), evaluated on the same 662 tasks.
 
 | Model | Accuracy (%) | Rubric satisfaction (%) | Finish (%) | Avg. tool calls |
 | --- | ---: | ---: | ---: | ---: |
