@@ -2,6 +2,14 @@
 
 **Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent**
 
+**Accepted to EMNLP 2026 Industry Track.** Camera-ready version submitted.
+
+**Zeyao Du, Tong Li, Haibo Zhang** · Shopee
+
+[Paper (arXiv)](https://arxiv.org/abs/2606.17698v3)
+[Product database](https://huggingface.co/datasets/ecomagentbench/EcomAgentBenchProductDB) ·
+[Citation](#citation)
+
 EComAgentBench evaluates whether an LLM shopping agent can *actively gather* a user's needs that
 are deliberately scattered across three sources, and recommend the right product. It ships a
 fully automated, three-stage pipeline:
@@ -13,7 +21,43 @@ fully automated, three-stage pipeline:
 3. **Evaluation** — score the recommendation with rubric-based LLM-as-Judge plus exact-match.
 
 This repository contains the **662 validated benchmark samples**, the product-database build
-scripts, and the full generation / prediction / evaluation code used in the paper.
+scripts, and the generation / prediction / evaluation pipeline with public API adapters.
+
+## Benchmark at a glance
+
+| Component | Released benchmark |
+| --- | --- |
+| Tasks | 662 validated tasks across 8 shopping intents |
+| Requirements | 6,645 typed rubrics across 6 rubric types |
+| Information sources | Visible query, tool-gated persona, scripted clarification |
+| Environment | 10 tools for product search, inspection, reviews, user interaction, and recommendation |
+| Episode budget | 100 agent iterations, at most one tool call per iteration, and up to 10 clarification turns |
+| Success criterion | Exact target-product match **or** satisfaction of every rubric |
+
+The released tasks are in English, cover a single marketplace with electronics-adjacent
+categories, and end in one product recommendation. Personas are synthetic and clarification
+responses are deterministic. The results characterize this setting rather than all e-commerce
+domains.
+
+## Paper results
+
+The following are the frozen results reported in the
+[camera-ready paper](https://arxiv.org/abs/2606.17698v3), evaluated on the same 662 tasks.
+
+| Model | Accuracy (%) | Rubric satisfaction (%) | Finish (%) | Avg. tool calls |
+| --- | ---: | ---: | ---: | ---: |
+| Claude Opus 4.6 | 57.1 | 76.6 | 84.6 | 33.9 |
+| GPT-5.4 | 47.0 | 81.0 | 99.4 | 25.1 |
+| Kimi K2.6 | 46.4 | 73.4 | 88.7 | 38.2 |
+| GPT-5 | 39.6 | 76.1 | 97.7 | 24.4 |
+| MiniMax M2.7 | 36.6 | 73.5 | 95.6 | 31.3 |
+| GPT-5 mini | 31.6 | 72.7 | 100.0 | 15.5 |
+| Qwen3-30B-A3B | 19.5 | 59.0 | 100.0 | 18.3 |
+
+Accuracy measures task-level success under the criterion above; rubric satisfaction measures
+the fraction of individual requirements satisfied. Finish is the harness's `finished` flag
+and does not necessarily imply a valid recommendation. These are the original paper results,
+not fresh runs against current public API endpoints; see [API validation status](#notes-on-official-apis).
 
 ---
 
@@ -101,8 +145,9 @@ uv run python scripts/download_db.py
 # or override the repo explicitly:
 uv run python scripts/download_db.py --repo ecomagentbench/EcomAgentBenchProductDB
 ```
-This downloads `product.db` into `data/products/`. After this, **prediction and evaluation run out
-of the box** (just set the API key for the provider you use, see below).
+This downloads `product.db` into `data/products/`. Configure the API keys for your prediction
+provider and the Gemini evaluation judge before running the pipeline. See
+[API validation status](#notes-on-official-apis) for the tested and unvalidated provider paths.
 
 ### Option B — Rebuild from Amazon Reviews 2023 (optional, transparent)
 The paper builds `product.db` from the **full** version of four categories — `All_Beauty`,
@@ -130,10 +175,10 @@ If `HF_TOKEN` is set in `.env`, it is used automatically to raise the download r
 > categories, and review sampling uses a stable per-product seed (independent of `PYTHONHASHSEED`),
 > so a rebuilt DB is deterministic across machines. It is **not** byte-identical to the original
 > paper DB — the specific 20-reviews-per-product subset differs (the original used a non-fixed hash
-> seed). **Products / queries / personas / clarifications are reproducible; only review-derived
-> content (review evidence, `review_opinion` rubrics) may differ.** This does not affect the
-> released benchmark, whose evaluation depends on `benchmark.jsonl` + target coverage, not on the
-> exact review subset.
+> seed). The released `benchmark.jsonl` remains fixed, but a different review subset can change
+> the evidence retrieved by agents and the review evidence available to the evaluation judge.
+> Use the prebuilt database together with the released benchmark to match the paper's task
+> environment. Re-running LLM-based generation does not guarantee identical samples.
 
 ---
 
@@ -142,17 +187,19 @@ If `HF_TOKEN` is set in `.env`, it is used automatically to raise the download r
 ### 1. Generation (optional — `benchmark.jsonl` is already provided)
 Construct new benchmark samples from the product DB:
 ```bash
-CONFIG=configs/settings.yaml SAMPLES=10 THREADS=16 bash scripts/generate.sh
+CONFIG=configs/settings.yaml OUTPUT=data/generated/benchmark.jsonl \
+  SAMPLES=10 THREADS=16 bash scripts/generate.sh
 # equivalently:
-uv run python -m src.generation --config configs/settings.yaml --samples 10
+uv run python -m src.generation --config configs/settings.yaml --samples 10 \
+  --output data/generated/benchmark.jsonl
 ```
 Overridable env vars: `OUTPUT`, `SAMPLES` (per-intent count), `INTENTS`, `THREADS`.
-Output is written to `data/benchmark/benchmark.jsonl`.
+The examples write new samples to `data/generated/benchmark.jsonl`. Omitting `OUTPUT` or
+`--output` uses `data/benchmark/benchmark.jsonl` and overwrites the released benchmark.
 
-> Note: re-running generation reproduces product / query / persona / clarification content, but
-> `review_opinion` rubrics and review evidence depend on the database's per-product review subset,
-> which may differ from the original build (see the rebuild reproducibility note above). Everything
-> else is stable.
+> Generation constructs a new dataset using LLM calls; it is not required to evaluate the
+> released 662 tasks. To evaluate a newly generated dataset, point `data.benchmark_dir` in a
+> separate configuration file to its directory.
 
 ### 2. Prediction
 Run an agent over the benchmark:
@@ -163,18 +210,23 @@ uv run python -m src.prediction.run_predict --config configs/settings.yaml --mod
 ```
 Supported `MODE`: `openai_api`, `openrouter`, `gemini`, `claude`.
 Only `sample_status == "ok"` samples are run. Each agent gets up to `max_steps` (default 100)
-tool calls and must end with `recommend_product`. Output:
+agent iterations, with at most one executed tool call per iteration; turns without a tool call
+also consume an iteration. A valid completed task requires a `recommend_product` call. Output:
 `data/benchmark/predictions_{model}.jsonl` (full `trajectory` + `reasoning_trace` + tool-call stats).
 
 ### 3. Evaluation
 Score predictions with rubric-based LLM-as-Judge (Gemini):
 ```bash
-CONFIG=configs/settings.yaml bash scripts/evaluate.sh
-# or score a specific predictions file:
-bash scripts/evaluate.sh --predictions data/benchmark/predictions_claude-opus-4-6.jsonl
+CONFIG=configs/settings.yaml bash scripts/evaluate.sh \
+  --predictions data/benchmark/predictions_claude-opus-4-6.jsonl
 # equivalently:
-uv run python -m src.evaluation.run_eval --config configs/settings.yaml
+uv run python -m src.evaluation.run_eval --config configs/settings.yaml \
+  --predictions data/benchmark/predictions_claude-opus-4-6.jsonl
 ```
+Replace the predictions path with the output of your run. A `MODE` override used for prediction
+does not change the mode saved in the configuration; passing `--predictions` explicitly ensures
+that evaluation reads the intended file.
+
 Outputs (next to the predictions file):
 `predictions_{model}_evaluation_results.jsonl`, `_evaluation_summary.json`, `_evaluation_summary.md`.
 
@@ -191,8 +243,6 @@ Everything lives in `configs/settings.yaml`. The blocks you will touch most:
 - `evaluation.llm.model` — the judge model.
 
 `llm_profiles` map a logical name (`openai` / `gemini` / `claude` / `openrouter`) to a provider.
-
----
 
 ---
 
@@ -263,12 +313,17 @@ generation artifacts retained for transparency. See [DATA.md](DATA.md).
 
 ## Citation
 
+Please cite the [arXiv paper](https://arxiv.org/abs/2606.17698).
+
 ```bibtex
-@inproceedings{ecomagentbench2026,
-  title     = {EComAgentBench: Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent},
-  author    = {Anonymous},
-  booktitle = {Proceedings of EMNLP 2026 (Industry Track)},
-  year      = {2026}
+@misc{du2026ecomagentbench,
+  title         = {EComAgentBench: Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent},
+  author        = {Zeyao Du and Tong Li and Haibo Zhang},
+  year          = {2026},
+  eprint        = {2606.17698},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2606.17698}
 }
 ```
 
