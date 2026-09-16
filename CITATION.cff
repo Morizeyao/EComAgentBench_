@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use EComAgentBench, please cite the paper in preferred-citation."
+type: software
+title: "EComAgentBench"
+authors:
+  - family-names: "Du"
+    given-names: "Zeyao"
+  - family-names: "Li"
+    given-names: "Tong"
+  - family-names: "Zhang"
+    given-names: "Haibo"
+repository-code: "https://github.com/Morizeyao/EComAgentBench_"
+url: "https://github.com/Morizeyao/EComAgentBench_"
+preferred-citation:
+  type: article
+  title: "EComAgentBench: Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent"
+  authors:
+    - family-names: "Du"
+      given-names: "Zeyao"
+    - family-names: "Li"
+      given-names: "Tong"
+    - family-names: "Zhang"
+      given-names: "Haibo"
+  journal: "arXiv"
+  year: 2026
+  doi: "10.48550/arXiv.2606.17698"
+  url: "https://arxiv.org/abs/2606.17698"
