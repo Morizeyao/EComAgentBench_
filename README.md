@@ -2,11 +2,11 @@
 
 **Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent**
 
-**Accepted to EMNLP 2026 Industry Track.**
+**Published in EMNLP 2026 Industry Track.**
 
 **Zeyao Du, Tong Li, Haibo Zhang** · Shopee
 
-[Paper (arXiv)](https://arxiv.org/abs/2606.17698)
+[Paper (ACL Anthology)](https://aclanthology.org/2026.emnlp-industry.61/) ·
 [Product database](https://huggingface.co/datasets/ecomagentbench/EcomAgentBenchProductDB) ·
 [Citation](#citation)
 
@@ -41,8 +41,8 @@ domains.
 
 ## Paper results
 
-The following are the frozen results reported in the
-[camera-ready paper](https://arxiv.org/abs/2606.17698), evaluated on the same 662 tasks.
+The following are the results reported in the
+[published paper](https://aclanthology.org/2026.emnlp-industry.61/), evaluated on the same 662 tasks.
 
 | Model | Accuracy (%) | Rubric satisfaction (%) | Finish (%) | Avg. tool calls |
 | --- | ---: | ---: | ---: | ---: |
@@ -313,17 +313,27 @@ generation artifacts retained for transparency. See [DATA.md](DATA.md).
 
 ## Citation
 
-Please cite the [arXiv paper](https://arxiv.org/abs/2606.17698).
+If you use this project, please cite the [published paper](https://aclanthology.org/2026.emnlp-industry.61/):
 
 ```bibtex
-@misc{du2026ecomagentbench,
-  title         = {EComAgentBench: Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent},
-  author        = {Zeyao Du and Tong Li and Haibo Zhang},
-  year          = {2026},
-  eprint        = {2606.17698},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.AI},
-  url           = {https://arxiv.org/abs/2606.17698}
+@inproceedings{du-etal-2026-ecomagentbench,
+    title = "{EC}om{A}gent{B}ench: Benchmarking Shopping Agents on Long-Horizon Tasks with Distributed Hidden Intent",
+    author = "Du, Zeyao  and
+      Li, Tong  and
+      Zhang, Haibo",
+    editor = "Atanasova, Pepa  and
+      Haffari, Gholamreza  and
+      Wang, Minghan",
+    booktitle = "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing: Industry Track",
+    month = oct,
+    year = "2026",
+    address = "Budapest, Hungary",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.emnlp-industry.61/",
+    doi = "10.18653/2026.emnlp-industry.61",
+    pages = "1012--1027",
+    ISBN = "979-8-89176-460-6",
+    abstract = "As LLM-based shopping agents enter production, existing benchmarks fail to capture how a shopper{'}s requirements arrive: stated implicitly in the query, recorded in a profile, or revealed only when the right question is asked. Benchmarks that expose full intent upfront and grade only the final choice can neither pose this long-horizon challenge nor explain which requirement an agent missed. To address this gap, we introduce EComAgentBench, a benchmark of 662 tasks grounded in real Amazon products and reviews. Each task scatters these requirements across a visible query, a tool-gated profile, and scripted clarification; an agent must uncover hidden intent, verify candidates against attributes and review evidence, and commit to a single product within 100 tool calls. Moreover, typed, source-tagged rubrics grade every task, attributing each failure to a requirement and its source. Construction is automated yet reliable, with every answer fixed in code before any text is generated and every sample validated. Our evaluation of seven models reveals that even the strongest attains only 57.1{\%} overall accuracy, and rubric satisfaction degrades from visible to hidden sources. Overall, we believe EComAgentBench will serve as a reproducible foundation for moving shopping agents from single-query search toward dependable assistance over long horizons."
 }
 ```
 
